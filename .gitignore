@@ -1,7 +1,12 @@
 *.py[cod]
+.pytest_cache
+__pycache__
 
 # C extensions
 *.so
+
+# Editor files
+.vscode
 
 # Installer logs
 pip-log.txt
