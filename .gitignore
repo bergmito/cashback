@@ -1,2 +1,10 @@
-.venv
+*.py[cod]
+
+# C extensions
+*.so
+
+# Installer logs
+pip-log.txt
+
+# Virtual environment
 venv
