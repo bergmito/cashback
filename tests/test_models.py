@@ -1,11 +1,16 @@
 import os
 import unittest
+
+from datetime import date
+from decimal import Decimal
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models.revendedor import Revendedor
+from models.compra import Compra
 
-class RevendedorModelTest(unittest.TestCase):
-    """Revendedor model testing"""
+
+class MainModelTest(unittest.TestCase):
+    """Main Test"""
 
     def setUp(self):
         """Setup test"""
@@ -21,6 +26,37 @@ class RevendedorModelTest(unittest.TestCase):
         self.session.commit()
         self._engine.execute(
             'DROP DATABASE IF EXISTS `test`')
+
+
+class CompraModelTest(MainModelTest):
+    """Compra model testing"""
+
+    def test_create(self):
+        """Compra creation"""
+        # cpf especial 153.509.460-56
+        compra = Compra()
+        compra.codigo = 'AAA-1000'
+        compra.valor = 2000.00
+        compra.data = date(2020, 2, 11)
+        compra.revendedor_cpf = '377.432.218-40'
+        compra.create(self.session)
+        self.assertEqual(compra.cashback_percentual, float(20))
+        self.assertEqual(compra.cashback_valor, 400)
+        self.assertEqual(compra.status, 'Em validação')
+        compra = Compra()
+        compra.codigo = 'AAA-1001'
+        compra.valor = Decimal(1340.50)
+        compra.data = date(2020, 2, 11)
+        compra.revendedor_cpf = '153.509.460-56'
+        compra.create(self.session)
+        TWOPLACES = Decimal(10) ** -2
+        self.assertEqual(compra.cashback_percentual, float(15))
+        self.assertEqual(compra.cashback_valor, Decimal(201.08).quantize(TWOPLACES))
+        self.assertEqual(compra.status, 'Aprovado')        
+
+
+class RevendedorModelTest(MainModelTest):
+    """Revendedor model testing"""
 
     def test_create(self):
         """Revendedor creation"""
