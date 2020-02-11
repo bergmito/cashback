@@ -30,3 +30,9 @@ class DBSessionManagement(object):
         self.engine.execute('USE `{db_name}`'.format(db_name=os.environ.get('DB_NAME')))
         Revendedor.metadata.create_all(self.engine)
         Compra.metadata.create_all(self.engine)
+
+    def drop_db(self):
+        self.engine.execute('DROP DATABASE IF EXISTS `{db_name}`'.format(
+            db_name=os.environ.get('DB_NAME')
+        ))
+        self.engine.execute('COMMIT')        

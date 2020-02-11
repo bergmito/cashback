@@ -18,11 +18,7 @@ class MainTest(unittest.TestCase):
 
     def tearDown(self):
         """Tear down Test"""
-        self.session_manager.engine.execute(
-            'DROP DATABASE IF EXISTS `{db_name}`'.format(
-                db_name=os.environ.get('DB_NAME')
-            ))
-        self.session_manager.engine.execute('COMMIT')
+        self.session_manager.drop_db()
 
     def test_app_running(self):
         """Test app is running"""
@@ -46,6 +42,25 @@ class RevendedorHandlerTest(MainTest):
     
     def test_get(self):
         """Get all revendedores"""
+        self._create_revendedor()
+        response = self.client().get('/revendedores')
+        revendedores = response.json
+        self.assertEqual(len(revendedores), 1)
+
+    def test_login(self):
+        """Revendedor login"""
+        self._create_revendedor()
+        json_body = {
+            "email": "f@test.com",
+        }
+        response = self.client().post('/revendedor/login', json=json_body)
+        self.assertEqual(response.status, '400 BAD REQUEST')
+        json_body['senha'] = "5555"
+        response = self.client().post('/revendedor/login', json=json_body)
+        self.assertEqual(response.json, 'Authorized')
+
+    def _create_revendedor(self):
+        """Create revendedor for test"""
         revendedor = Revendedor()
         revendedor.nome = 'Felipe Silva'
         revendedor.cpf = '856.456.789-32'
@@ -54,7 +69,3 @@ class RevendedorHandlerTest(MainTest):
         revendedor.senha = '5555'
         session = self.session_manager.get_db_session()
         revendedor.create(session)
-        response = self.client().get('/revendedores')
-        print("\n====================")
-        print(response)
-        print("====================\n")

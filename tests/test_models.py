@@ -36,8 +36,8 @@ class RevendedorModelTest(unittest.TestCase):
         self.assertEqual(revendedores[0].nome, 'Felipe Bergmans')
 
 
-    def test_revendedor_get_by_cpf(self):
-        """Revendedor by cpf"""
+    def test_revendedor_get_by_email(self):
+        """Revendedor by email"""
         revendedor1 = Revendedor()
         revendedor1.email = 'joao@gmail.com'
         revendedor1.nome = 'Joao Bergmans'
@@ -50,8 +50,8 @@ class RevendedorModelTest(unittest.TestCase):
         revendedor2.cpf = '379.153.218-50'
         revendedor2.senha = '123'
         revendedor2.create(self.session)
-        revendedor = Revendedor.get_by_cpf(self.session, '379.153.218-50')
-        self.assertEqual(revendedor.email, 'jose@gmail.com')
-        revendedor = Revendedor.get_by_cpf(self.session, '111.111.111-11')
+        revendedor = Revendedor.get_by_email(self.session, 'joao@gmail.com')
+        self.assertEqual(revendedor.nome, 'Joao Bergmans')
+        revendedor = Revendedor.get_by_email(self.session, 'felipe@test.com')
         self.assertIsNone(revendedor)
     

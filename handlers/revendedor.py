@@ -11,7 +11,8 @@ class RevendedoresHandler(Resource):
         session = DBSessionManagement().get_db_session()
         try:
             params = request.get_json()
-            if not self._post_params_is_valid(params):
+            required_params = ['nome', 'email', 'cpf', 'senha']
+            if not _post_params_is_valid(params, required_params):
                 return 'Bad request', 400
             revendedor = Revendedor()
             revendedor.email = params['email']
@@ -24,29 +25,45 @@ class RevendedoresHandler(Resource):
         except Exception as error:
             session.rollback()
             return str(error), 500
-
     
     def get(self):
         """List all Revendedores"""
         session = DBSessionManagement().get_db_session()
-        revendedores = []
-        for revendedor in Revendedor.get_all(session):
-            revendedores.append(jsonify(revendedor.__dict__))
-        session.commit()
+        try:
+            revendedores = []
+            for revendedor in Revendedor.get_all(session):
+                revendedores.append(revendedor.to_json())
+            session.commit()
 
-        return revendedores
-
-    def _post_params_is_valid(self, params):
-        """Check all params is correct"""
-        required_params = ['nome', 'email', 'cpf', 'senha']
-        for param in required_params:
-            if not param in params.keys():
-                return False
-        return True
+            return revendedores
+        except Exception as error:
+            session.rollback()
+            return str(error), 500
 
 
 class RevendedorLoginHandler(Resource):
 
     def post(self):
         """Revendedor Login"""
-        pass
+        session = DBSessionManagement().get_db_session()
+        try:
+            params = request.get_json()         
+            if not _post_params_is_valid(params, ['email', 'senha']):
+                return 'Bad request', 400        
+            revendedor = Revendedor.get_by_email(session, params['email'])
+            password_is_correct = (revendedor.senha == params['senha'])
+            session.commit()
+            if password_is_correct:
+                return 'Authorized', 200
+            else:
+                return 'Not authorized', 401
+        except Exception as error:
+            return str(error), 500
+
+
+def _post_params_is_valid(params, required_params):
+    """Check all params is correct"""
+    for param in required_params:
+        if not param in params.keys():
+            return False
+    return True

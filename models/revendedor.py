@@ -18,13 +18,23 @@ class Revendedor(MYSQL_BASE):
         session.add(self)
         session.commit()
 
+    def to_json(self):
+        """Convert db entry instance to json"""
+        return {
+            "email": self.email,
+            "nome": self.nome,
+            "cpf": self.cpf,
+            "cidade": self.cidade,
+            "senha": self.senha
+        }
+
     @classmethod
     def get_all(cls, session):
         """List all Revendedores"""
         return session.query(cls).all()
 
     @classmethod
-    def get_by_cpf(cls, session, cpf):
-        """Get revendedor by cpf"""
+    def get_by_email(cls, session, email):
+        """Get revendedor by email"""
         return session.query(cls).filter(
-            cls.cpf == cpf).first()
+            cls.email == email).first()
