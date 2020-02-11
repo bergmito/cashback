@@ -26,6 +26,7 @@ class RevendedorModelTest(unittest.TestCase):
         revendedor.email = 'felipe@gmail.com'
         revendedor.nome = 'Felipe Bergmans'
         revendedor.cpf = '377.432.218-40'
+        revendedor.cidade = 'São Paulo'
         revendedor.senha = '123'
         revendedor.create(self.session)
         revendedores = Revendedor.get_all(self.session)

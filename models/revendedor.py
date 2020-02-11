@@ -11,9 +11,10 @@ class Revendedor(MYSQL_BASE):
     cpf = Column(String(15), nullable=False, unique=True)
     email = Column(String(128), nullable=False, unique=True)
     senha = Column(String(128), nullable=False)
+    cidade = Column(String(128), nullable=True)
 
     def create(self, session):
-        """Create new Revendedor"""        
+        """Create new Revendedor"""
         session.add(self)
         session.commit()
 
