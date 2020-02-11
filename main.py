@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify
 from flask_restful import Resource, Api
 
@@ -19,4 +20,5 @@ api.add_resource(ComprasHandler, '/compras')
 api.add_resource(CompraHandler, '/compra/<compra_id>')
 
 if __name__ == '__main__':
+    os.environ['DB_NAME'] = 'cashback'
     app.run()

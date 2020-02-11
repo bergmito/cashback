@@ -1,3 +1,4 @@
+import os
 import unittest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -9,7 +10,7 @@ class RevendedorModelTest(unittest.TestCase):
     def setUp(self):
         """Setup test"""
         self._engine = create_engine('mysql+pymysql://root:hinade2019@localhost')
-        self._engine.execute('CREATE DATABASE IF NOT EXISTS `{0}`'.format('test'))
+        self._engine.execute('CREATE DATABASE IF NOT EXISTS `test`')
         self._engine.execute('USE `test`')
         Revendedor.metadata.create_all(self._engine)
         self.connection = self._engine.connect()
@@ -18,7 +19,8 @@ class RevendedorModelTest(unittest.TestCase):
     def tearDown(self):
         """Tear down test"""
         self.session.commit()
-        self._engine.execute('DROP DATABASE IF EXISTS test')
+        self._engine.execute(
+            'DROP DATABASE IF EXISTS `test`')
 
     def test_create(self):
         """Revendedor creation"""

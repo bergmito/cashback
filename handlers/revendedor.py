@@ -2,12 +2,13 @@
 from flask import jsonify, request
 from flask_restful import Resource, Api
 from models.revendedor import Revendedor
-from session_management import session
+from session_management import DBSessionManagement
 
 class RevendedoresHandler(Resource):
 
     def post(self):
         """Create a new Revendedor"""
+        session = DBSessionManagement().get_db_session()
         try:
             params = request.get_json()
             if not self._post_params_is_valid(params):
@@ -21,14 +22,17 @@ class RevendedoresHandler(Resource):
 
             return '', 204
         except Exception as error:
+            session.rollback()
             return str(error), 500
 
     
     def get(self):
         """List all Revendedores"""
+        session = DBSessionManagement().get_db_session()
         revendedores = []
         for revendedor in Revendedor.get_all(session):
-            revendedores.append(revendedor.__dict__)
+            revendedores.append(jsonify(revendedor.__dict__))
+        session.commit()
 
         return revendedores
 
