@@ -1,4 +1,5 @@
 """Handlers of Revendedor"""
+import requests
 from flask import jsonify, request
 from flask_restful import Resource
 from models.revendedor import Revendedor
@@ -60,3 +61,26 @@ class RevendedorLoginHandler(Resource):
                 return 'Not authorized', 401
         except Exception as error:
             return str(error), 500
+
+
+class RevendedorCashbackHandler(Resource):
+
+    def get(self, revendedor_cpf):
+        """Get cashback amount of Revendedor"""
+        try:
+            EXTERNAL_URL_CASHBACK = (
+                'https://mdaqk8ek5j.execute-api.us-east-1.amazonaws.com'
+                '/v1/cashback?cpf={revendedor_cpf}'.format(
+                    revendedor_cpf=revendedor_cpf))
+            TOKEN = 'ZXPURQOARHiMc6Y0flhRC1LVlZQVFRnm'
+            response = requests.get(
+                EXTERNAL_URL_CASHBACK, headers={'token': TOKEN})
+            if response.status_code == 200:
+                return response.json()["body"]['credit']
+            else:
+                return ('Cashback API is down. '
+                        'Please try again in a few minutes.'), 500
+        except Exception:
+            return ('Sorry, occur error. '
+                    'Please try again in a few minutes.'), 500
+        

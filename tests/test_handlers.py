@@ -1,7 +1,9 @@
 """Test app"""
-import unittest
 import os
+import json
+import unittest
 
+from unittest.mock import patch, Mock
 from main import app
 from models.revendedor import Revendedor
 from models.compra import Compra
@@ -138,6 +140,21 @@ class RevendedorHandlerTest(MainTest):
         json_body['senha'] = "5555"
         response = self.client().post('/revendedor/login', json=json_body)
         self.assertEqual(response.json, 'Authorized')
+
+    def test_cashback_amount(self):
+        """Cashback amount"""
+        with patch('requests.get') as mock_request:
+            mock_resp = Mock()
+            mock_resp.status_code = 200
+            mock_resp.json = Mock(return_value={
+                "body": {
+                    "statusCode": 200,
+                    "credit": 1000
+                }
+            })
+            mock_request.return_value = mock_resp
+            response = self.client().get('/revendedor/2222/cashback')
+            self.assertEqual(response.json, 1000)
 
     def _create_revendedor(self):
         """Create Revendedor for test"""

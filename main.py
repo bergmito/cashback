@@ -4,7 +4,7 @@ from flask_restful import Resource, Api
 
 from handlers.compra import ComprasHandler, CompraHandler
 from handlers.revendedor import (RevendedoresHandler,
-    RevendedorLoginHandler)
+    RevendedorLoginHandler, RevendedorCashbackHandler)
 
 app = Flask(__name__)
 api = Api(app)
@@ -16,6 +16,7 @@ class App(Resource):
 api.add_resource(App, '/')
 api.add_resource(RevendedoresHandler, '/revendedores')
 api.add_resource(RevendedorLoginHandler, '/revendedor/login')
+api.add_resource(RevendedorCashbackHandler, '/revendedor/<revendedor_cpf>/cashback')
 api.add_resource(ComprasHandler, '/compras')
 api.add_resource(CompraHandler, '/compra/<compra_codigo>')
 
