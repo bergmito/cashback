@@ -1,5 +1,5 @@
 Projeto Cashback
-  Utiliza o framework Flask, com o ORM SQLAlchemy (neste exemplo está em uso o MySQl)
+  Utiliza o framework Flask, com o ORM SQLAlchemy (neste exemplo está em uso o banco de dados MySQL).
 
 Instruções para execução do app:
   1) Altere, no arquivo setup.py, o usuário, senha e o caminho para o banco de dados.
