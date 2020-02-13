@@ -2,14 +2,33 @@
 from flask_restful import Resource, request
 from models.compra import Compra
 from session_management import DBSessionManagement
-from utils import post_params_is_valid, str_date_to_date
+from utils import post_params_is_valid, str_date_to_date, set_value_if_exist
 
 class CompraHandler(Resource):
 
     def put(self, compra_codigo):
         """Update Compra"""
-        pass
-        
+        session = DBSessionManagement().get_db_session()
+        try:
+            params = request.get_json()
+            compra = Compra.get_by_codigo(session, compra_codigo)
+            if not compra:
+                session.rollback()
+                return 'Compra not found', 404
+            if compra.status != 'Em validação':
+                session.rollback()
+                return 'Compra locked to update', 423
+            set_value_if_exist(params, 'codigo', compra)
+            set_value_if_exist(params, 'valor', compra)
+            set_value_if_exist(params, 'revendedor_cpf', compra)
+            if 'data' in params:
+                compra.data = str_date_to_date(params['data'])
+            compra.put(session)
+
+            return '', 204
+        except Exception as error:
+            session.rollback()
+            return str(error), 500
 
     def delete(self, compra_codigo):
         """Delete Compra"""
@@ -31,7 +50,7 @@ class ComprasHandler(Resource):
             compra.valor = params['valor']
             compra.data = str_date_to_date(params['data']).date()
             compra.revendedor_cpf = params['revendedor_cpf']
-            compra.create(session)
+            compra.put(session)
 
             return '', 204
         except Exception as error:

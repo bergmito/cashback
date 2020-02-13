@@ -15,6 +15,11 @@ def post_params_is_valid(params, required_params):
             return False
     return True
 
+def set_value_if_exist(params, param, object):
+    """If param, set value in object"""
+    if param in params:
+        setattr(object, param, params[param])
+
 def str_date_to_date(str_date):
     """Convert date string to date"""
     try:

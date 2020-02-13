@@ -17,7 +17,7 @@ class Compra(MYSQL_BASE):
     cashback_valor = Column(DECIMAL(18, 2), nullable=False, default=0)
     cashback_percentual = Column(Float, nullable=False, default=0)
 
-    def create(self, session):
+    def put(self, session):
         """Create a new Compra"""
         self._set_status()
         self._set_cashback()
@@ -40,6 +40,12 @@ class Compra(MYSQL_BASE):
     def get_all(cls, session):
         """Get all Compras"""
         return session.query(cls).all()
+
+    @classmethod
+    def get_by_codigo(cls, session, codigo):
+        """Get Compra by codigo"""
+        return session.query(cls).filter(
+            cls.codigo == codigo).first()
 
     def _set_cashback(self):
         """Set cashback values"""

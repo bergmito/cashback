@@ -50,15 +50,40 @@ class CompraHandlerTest(MainTest):
 
     def test_get_all(self):
         """Get all compras"""
-        compra = Compra()
-        compra.codigo = 'FBS-1002'
-        compra.valor = 1600
-        compra.data = str_date_to_date('2020-02-10')
-        compra.revendedor_cpf = '677.478.111-78'
-        compra.create(self.session)
+        self._create_compra('677.478.111-78', 'FBS-1002')
         response = self.client().get('/compras')
         compras = response.json
         self.assertEqual(len(compras), 1)
+
+    def test_update(self):
+        """Compra update"""
+        self._create_compra('677.478.111-78', 'FBS-1002')
+        json_body = {
+            "codigo": "FBI-1002",
+            "valor": 1050,
+            "data": '2020-02-20',
+            "revendedor_cpf": "377.432.218-40"
+        }
+        response = self.client().put('/compra/{compra_codigo}'.format(
+            compra_codigo='FBS-1002'), json=json_body)
+        self.assertEqual(response.status, '204 NO CONTENT')
+        self._create_compra('153.509.460-56', 'FBS-1014')
+        response = self.client().put('/compra/{compra_codigo}'.format(
+            compra_codigo='FBS-1002'), json=json_body)
+        self.assertEqual(response.status, '404 NOT FOUND')
+        response = self.client().put('/compra/{compra_codigo}'.format(
+            compra_codigo='FBS-1014'), json=json_body)        
+        self.assertEqual(response.status, '423 LOCKED')
+
+    
+    def _create_compra(self, revendedor_cpf, codigo):
+        """Create Compra for test"""
+        compra = Compra()
+        compra.codigo = codigo
+        compra.valor = 1600
+        compra.data = str_date_to_date('2020-02-10')
+        compra.revendedor_cpf = revendedor_cpf
+        compra.put(self.session)                
 
 
 class RevendedorHandlerTest(MainTest):
@@ -95,7 +120,7 @@ class RevendedorHandlerTest(MainTest):
         self.assertEqual(response.json, 'Authorized')
 
     def _create_revendedor(self):
-        """Create revendedor for test"""
+        """Create Revendedor for test"""
         revendedor = Revendedor()
         revendedor.nome = 'Felipe Silva'
         revendedor.cpf = '856.456.789-32'

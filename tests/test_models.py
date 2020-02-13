@@ -36,7 +36,7 @@ class CompraModelTest(MainModelTest):
         compra.valor = 2000.00
         compra.data = date(2020, 2, 11)
         compra.revendedor_cpf = '377.432.218-40'
-        compra.create(self.session)
+        compra.put(self.session)
         self.assertEqual(compra.cashback_percentual, float(20))
         self.assertEqual(compra.cashback_valor, 400)
         self.assertEqual(compra.status, 'Em validação')
@@ -45,11 +45,27 @@ class CompraModelTest(MainModelTest):
         compra.valor = float_to_decimal(1340.50)
         compra.data = date(2020, 2, 11)
         compra.revendedor_cpf = '153.509.460-56'
-        compra.create(self.session)
+        compra.put(self.session)
         self.assertEqual(compra.cashback_percentual, float(15))
         self.assertEqual(compra.cashback_valor, float_to_decimal(201.07))
-        self.assertEqual(compra.status, 'Aprovado')        
+        self.assertEqual(compra.status, 'Aprovado')
 
+    def test_get_by_codigo(self):
+        """Compra by codigo"""
+        compra1 = Compra()
+        compra1.codigo = 'AAA-1000'
+        compra1.valor = 2000.00
+        compra1.data = date(2020, 2, 11)
+        compra1.revendedor_cpf = '377.432.218-40'
+        compra1.put(self.session)
+        compra2 = Compra()
+        compra2.codigo = 'AAA-1001'
+        compra2.valor = 2055.13
+        compra2.data = date(2020, 3, 11)
+        compra2.revendedor_cpf = '377.432.218-40'
+        compra2.put(self.session)
+        compra = Compra.get_by_codigo(self.session, 'AAA-1001')
+        self.assertEqual(float(compra.valor), 2055.13)
 
 class RevendedorModelTest(MainModelTest):
     """Revendedor model testing"""
