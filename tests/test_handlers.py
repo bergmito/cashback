@@ -75,6 +75,26 @@ class CompraHandlerTest(MainTest):
             compra_codigo='FBS-1014'), json=json_body)        
         self.assertEqual(response.status, '423 LOCKED')
 
+    def test_delete(self):
+        """Compra delete"""
+        self._create_compra('456.213.789-88', 'AAA-4444')
+        compras = Compra.get_all(self.session)
+        self.session.commit()
+        self.assertEqual(len(compras), 1)
+        response = self.client().delete('/compra/{compra_codigo}'.format(
+            compra_codigo='AAA-4444'))
+        self.assertEqual(response.status, '204 NO CONTENT')
+        compras = Compra.get_all(self.session)
+        self.session.commit()
+        self.assertEqual(len(compras), 0)
+        response = self.client().delete('/compra/{compra_codigo}'.format(
+            compra_codigo='AAA-0000'))
+        self.assertEqual(response.status, '404 NOT FOUND')
+        self._create_compra('153.509.460-56', 'FBS-1014')
+        response = self.client().delete('/compra/{compra_codigo}'.format(
+            compra_codigo='FBS-1014'))
+        self.assertEqual(response.status, '423 LOCKED')
+
     
     def _create_compra(self, revendedor_cpf, codigo):
         """Create Compra for test"""

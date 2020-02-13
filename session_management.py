@@ -15,7 +15,7 @@ class DBSessionManagement(object):
         self.engine = create_engine(
             'mysql+pymysql://{user}:{password}@{server}'.format(
             user=DB_USER, password=DB_PASSWORD,
-            server=DB_SERVER), echo=False)
+            server=DB_SERVER), echo=True)
     
     def get_db_session(self):
         self.engine.execute('USE `{db_name}`'.format(db_name=os.environ.get('DB_NAME')))

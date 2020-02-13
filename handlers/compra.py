@@ -32,8 +32,21 @@ class CompraHandler(Resource):
 
     def delete(self, compra_codigo):
         """Delete Compra"""
-        pass
+        session = DBSessionManagement().get_db_session()
+        try:
+            compra = Compra.get_by_codigo(session, compra_codigo)
+            if not compra:
+                session.rollback()
+                return 'Compra not found', 404
+            if compra.status != 'Em validação':
+                session.rollback()
+                return 'Compra locked to update', 423
+            compra.delete(session)
 
+            return '', 204
+        except Exception as error:
+            session.rollback()
+            return str(error), 500
 
 class ComprasHandler(Resource):
 

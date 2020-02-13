@@ -67,6 +67,19 @@ class CompraModelTest(MainModelTest):
         compra = Compra.get_by_codigo(self.session, 'AAA-1001')
         self.assertEqual(float(compra.valor), 2055.13)
 
+    def test_delete(self):
+        """Delete Compra"""
+        compra = Compra()
+        compra.codigo = 'AAA-1000'
+        compra.valor = 2000.00
+        compra.data = date(2020, 2, 11)
+        compra.revendedor_cpf = '377.432.218-40'
+        compra.put(self.session)
+        self.assertEqual(len(Compra.get_all(self.session)), 1)
+        compra.delete(self.session)
+        self.assertEqual(len(Compra.get_all(self.session)), 0)
+
+
 class RevendedorModelTest(MainModelTest):
     """Revendedor model testing"""
 

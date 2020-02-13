@@ -23,6 +23,11 @@ class Compra(MYSQL_BASE):
         self._set_cashback()
         session.add(self)
         session.commit()
+
+    def delete(self, session):
+        """Delete Compra"""
+        session.delete(self)
+        session.commit()
     
     def to_json(self):
         """Convert db entry instance to json"""
@@ -30,7 +35,6 @@ class Compra(MYSQL_BASE):
             "codigo": self.codigo,
             "valor": float(self.valor),
             "data": date_to_str_date(self.data),
-            "revendedor_cpf": self.revendedor_cpf,
             "status": self.status,
             "cashback_valor": float(self.cashback_valor),
             "cashback_percentual": self.cashback_percentual
