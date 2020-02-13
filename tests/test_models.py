@@ -2,8 +2,9 @@ import os
 import unittest
 
 from datetime import date
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+# from sqlalchemy import create_engine
+# from sqlalchemy.orm import sessionmaker
+from session_management import DBSessionManagement
 from models.revendedor import Revendedor
 from models.compra import Compra
 from utils import float_to_decimal
@@ -14,18 +15,15 @@ class MainModelTest(unittest.TestCase):
 
     def setUp(self):
         """Setup test"""
-        self._engine = create_engine('mysql+pymysql://root:hinade2019@localhost')
-        self._engine.execute('CREATE DATABASE IF NOT EXISTS `test`')
-        self._engine.execute('USE `test`')
-        Revendedor.metadata.create_all(self._engine)
-        self.connection = self._engine.connect()
-        self.session = sessionmaker(bind=self.connection)()
+        os.environ['DB_NAME'] = 'testdb'
+        self.session_manager = DBSessionManagement()
+        self.session_manager.generate_db()
+        self.session = self.session_manager.get_db_session()
 
     def tearDown(self):
         """Tear down test"""
         self.session.commit()
-        self._engine.execute(
-            'DROP DATABASE IF EXISTS `test`')
+        self.session_manager.drop_db()
 
 
 class CompraModelTest(MainModelTest):

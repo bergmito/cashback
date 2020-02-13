@@ -1,6 +1,6 @@
 """Handlers of Revendedor"""
 from flask import jsonify, request
-from flask_restful import Resource, Api
+from flask_restful import Resource
 from models.revendedor import Revendedor
 from session_management import DBSessionManagement
 from utils import post_params_is_valid
@@ -13,7 +13,7 @@ class RevendedoresHandler(Resource):
         try:
             params = request.get_json()
             required_params = ['nome', 'email', 'cpf', 'senha']
-            if not _post_params_is_valid(params, required_params):
+            if not post_params_is_valid(params, required_params):
                 return 'Bad request', 400
             revendedor = Revendedor()
             revendedor.email = params['email']

@@ -30,7 +30,7 @@ class Revendedor(MYSQL_BASE):
 
     @classmethod
     def get_all(cls, session):
-        """List all Revendedores"""
+        """Get all Revendedores"""
         return session.query(cls).all()
 
     @classmethod

@@ -2,7 +2,7 @@
 from sqlalchemy import (Column, String, BigInteger, DECIMAL,
     Date, Float)
 from models.base import MYSQL_BASE
-from utils import float_to_decimal
+from utils import float_to_decimal, date_to_str_date
 
 class Compra(MYSQL_BASE):
     """Class for Compra"""
@@ -22,7 +22,24 @@ class Compra(MYSQL_BASE):
         self._set_status()
         self._set_cashback()
         session.add(self)
-        session.commit()   
+        session.commit()
+    
+    def to_json(self):
+        """Convert db entry instance to json"""
+        return {
+            "codigo": self.codigo,
+            "valor": float(self.valor),
+            "data": date_to_str_date(self.data),
+            "revendedor_cpf": self.revendedor_cpf,
+            "status": self.status,
+            "cashback_valor": float(self.cashback_valor),
+            "cashback_percentual": self.cashback_percentual
+        }
+
+    @classmethod
+    def get_all(cls, session):
+        """Get all Compras"""
+        return session.query(cls).all()
 
     def _set_cashback(self):
         """Set cashback values"""

@@ -1,4 +1,5 @@
 """Utils methods"""
+from datetime import datetime
 from decimal import Decimal
 
 
@@ -13,4 +14,18 @@ def post_params_is_valid(params, required_params):
         if not param in params.keys():
             return False
     return True
+
+def str_date_to_date(str_date):
+    """Convert date string to date"""
+    try:
+        return datetime.strptime(str_date, "%Y-%m-%d")
+    except:
+        return None
+
+def date_to_str_date(date):
+    """Convert date to date string"""
+    try:
+        return date.strftime("%Y-%m-%d")
+    except:
+        return None
     

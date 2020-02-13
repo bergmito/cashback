@@ -17,7 +17,7 @@ api.add_resource(App, '/')
 api.add_resource(RevendedoresHandler, '/revendedores')
 api.add_resource(RevendedorLoginHandler, '/revendedor/login')
 api.add_resource(ComprasHandler, '/compras')
-api.add_resource(CompraHandler, '/compra/<compra_id>')
+api.add_resource(CompraHandler, '/compra/<compra_codigo>')
 
 if __name__ == '__main__':
     os.environ['DB_NAME'] = 'cashback'
