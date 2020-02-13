@@ -21,3 +21,7 @@ class ComprasHandler(Resource):
     def post(self):
         """Create a new Compra"""
         pass
+
+    def get(self, compra_id):
+        """Get all Compras"""
+        pass

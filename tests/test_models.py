@@ -2,11 +2,11 @@ import os
 import unittest
 
 from datetime import date
-from decimal import Decimal
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models.revendedor import Revendedor
 from models.compra import Compra
+from utils import float_to_decimal
 
 
 class MainModelTest(unittest.TestCase):
@@ -33,7 +33,6 @@ class CompraModelTest(MainModelTest):
 
     def test_create(self):
         """Compra creation"""
-        # cpf especial 153.509.460-56
         compra = Compra()
         compra.codigo = 'AAA-1000'
         compra.valor = 2000.00
@@ -45,13 +44,12 @@ class CompraModelTest(MainModelTest):
         self.assertEqual(compra.status, 'Em validação')
         compra = Compra()
         compra.codigo = 'AAA-1001'
-        compra.valor = Decimal(1340.50)
+        compra.valor = float_to_decimal(1340.50)
         compra.data = date(2020, 2, 11)
         compra.revendedor_cpf = '153.509.460-56'
         compra.create(self.session)
-        TWOPLACES = Decimal(10) ** -2
         self.assertEqual(compra.cashback_percentual, float(15))
-        self.assertEqual(compra.cashback_valor, Decimal(201.08).quantize(TWOPLACES))
+        self.assertEqual(compra.cashback_valor, float_to_decimal(201.07))
         self.assertEqual(compra.status, 'Aprovado')        
 
 

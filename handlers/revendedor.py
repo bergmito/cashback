@@ -3,6 +3,7 @@ from flask import jsonify, request
 from flask_restful import Resource, Api
 from models.revendedor import Revendedor
 from session_management import DBSessionManagement
+from utils import post_params_is_valid
 
 class RevendedoresHandler(Resource):
 
@@ -48,7 +49,7 @@ class RevendedorLoginHandler(Resource):
         session = DBSessionManagement().get_db_session()
         try:
             params = request.get_json()         
-            if not _post_params_is_valid(params, ['email', 'senha']):
+            if not post_params_is_valid(params, ['email', 'senha']):
                 return 'Bad request', 400        
             revendedor = Revendedor.get_by_email(session, params['email'])
             password_is_correct = (revendedor.senha == params['senha'])
@@ -59,11 +60,3 @@ class RevendedorLoginHandler(Resource):
                 return 'Not authorized', 401
         except Exception as error:
             return str(error), 500
-
-
-def _post_params_is_valid(params, required_params):
-    """Check all params is correct"""
-    for param in required_params:
-        if not param in params.keys():
-            return False
-    return True

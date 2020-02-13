@@ -2,6 +2,7 @@
 from sqlalchemy import (Column, String, BigInteger, DECIMAL,
     Date, Float)
 from models.base import MYSQL_BASE
+from utils import float_to_decimal
 
 class Compra(MYSQL_BASE):
     """Class for Compra"""
@@ -26,7 +27,8 @@ class Compra(MYSQL_BASE):
     def _set_cashback(self):
         """Set cashback values"""
         self.cashback_percentual = self._get_cashback_percent(self.valor)
-        self.cashback_valor = self.valor * (self.cashback_percentual / 100)
+        self.cashback_valor = float_to_decimal(
+            float(self.valor) * (self.cashback_percentual / 100))
 
     def _set_status(self):
         """Set status for Compra"""

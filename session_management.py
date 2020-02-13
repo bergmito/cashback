@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from models.compra import Compra
 from models.revendedor import Revendedor
 
-DB_USER='root'
+DB_USER='dev'
 DB_PASSWORD='hinade2019'
 DB_SERVER='localhost'
 
@@ -15,7 +15,7 @@ class DBSessionManagement(object):
         self.engine = create_engine(
             'mysql+pymysql://{user}:{password}@{server}'.format(
             user=DB_USER, password=DB_PASSWORD,
-            server=DB_SERVER), echo=True)
+            server=DB_SERVER), echo=False)
     
     def get_db_session(self):
         self.engine.execute('USE `{db_name}`'.format(db_name=os.environ.get('DB_NAME')))
